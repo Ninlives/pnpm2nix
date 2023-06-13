@@ -9,8 +9,9 @@ In addition to all arguments accepted by `stdenv.mkDerivation`, the `mkPnpmPacka
 | argument                 | description                                                                 | default                      |
 | ------------------------ | --------------------------------------------------------------------------- | ---------------------------- |
 | `src`                    | The path to the package sources (required)                                  |                              |
-| `packageJSON`            | Override the path to `package.json`                                         | `${src}/package.json`        |
-| `pnpmLockYaml`           | Override the path to `pnpm-lock.yaml`                                       | `${src}/pnpm-lock.yaml`      |
+| `packageJSON`            | Override the relative path to `package.json`                                | `package.json`               |
+| `pnpmLockYaml`           | Override the relative path to `pnpm-lock.yaml`                              | `pnpm-lock.yaml`             |
+| `lockOverride`           | Override the content of `pnpmLockYaml`                                      | `{}`                         |
 | `pname`                  | Override the package name                                                   | read from `package.json`     |
 | `version`                | Override the package version                                                | read from `package.json`     |
 | `name`                   | Override the combined package name                                          | `${pname}-${version}`        |
@@ -23,4 +24,5 @@ In addition to all arguments accepted by `stdenv.mkDerivation`, the `mkPnpmPacka
 | `copyPnpmStore`          | Copy the pnpm store into the build directory instead of linking it          | `true`                       |
 | `copyNodeModules`        | Copy the `node_modules` into the build directory instead of linking it      | `false`                      |
 | `extraNodeModuleSources` | Additional files that should be available during `pnpm install`             | `[]`                         |
-| `extraBuildInputs`       | Additional entries for `nativeBuildInputs`                                  | `[]`                         |
+| `extraBuildInputs`       | Additional entries for `buildInputs`                                        | `[]`                         |
+| `extraNativeBuildInputs` | Additional entries for `nativeBuildInputs`                                  | `[]`                         |
