@@ -48,10 +48,10 @@ in
       lockFile = runCommand "pnpm-lock.yaml" { } "${remarshal}/bin/json2yaml ${
           builtins.toFile "lock.json" (builtins.toJSON lock)
         } $out";
-      pnpmWorkspaceYamlSrc = lib.traceValSeq "${src}/${pnpmWorkspaceYaml}";
-      workspaces = with lib; traceValSeq (
+      pnpmWorkspaceYamlSrc = "${src}/${pnpmWorkspaceYaml}";
+      workspaces = with lib;
         [ "." ] ++ (optionals (builtins.pathExists pnpmWorkspaceYamlSrc)
-          (parseYaml pnpmWorkspaceYamlSrc).packages));
+          (parseYaml pnpmWorkspaceYamlSrc).packages);
     in
     stdenv.mkDerivation (
       recursiveUpdate
