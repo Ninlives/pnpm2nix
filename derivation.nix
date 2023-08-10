@@ -5,7 +5,6 @@
 , callPackage
 , runCommand
 , remarshal
-, xorg
 , ...
 }:
 
@@ -13,7 +12,6 @@ with builtins; with lib; with callPackage ./lockfile.nix { };
 let
   nodePkg = nodejs;
   pkgConfigPkg = pkg-config;
-  lndir = "${xorg.lndir}/bin/lndir";
 in
 {
   mkPnpmPackage =
@@ -71,14 +69,9 @@ in
               then passthru.nodeModules.buildPhase
               else (lib.concatMapStringsSep "\n" (w: ''
                 ${if !copyNodeModules
-                  then ''
-                    mkdir -p ${w}/node_modules
-                    ${lndir} ${passthru.nodeModules}/${w}/node_modules ${w}/node_modules
-                  ''
-                  else ''
-                    cp -vr ${passthru.nodeModules}/${w}/node_modules ${w}/node_modules
-                  ''
-                }
+                  then "ln -s"
+                  else "cp -vr"
+                } ${passthru.nodeModules}/${w}/node_modules ${w}/node_modules
               '') workspaces)
             }
 
@@ -149,18 +142,13 @@ in
                 # pnpm output warnings to stdin, togather with the results.
                 # Seriously, pnpm?
                 store=$(pnpm store path|tail -n-1)
+                mkdir -p $(dirname $store)
 
                 # solve pnpm: EACCES: permission denied, copyfile '/build/.pnpm-store
                 ${if !copyPnpmStore
-                  then ''
-                    mkdir -p $store
-                    ${lndir} ${passthru.pnpmStore} $store
-                  ''
-                  else ''
-                    mkdir -p $(dirname $store)
-                    cp -vRL  ${passthru.pnpmStore} $store
-                  ''
-                }
+                  then "ln -s"
+                  else "cp -vRL"
+                } ${passthru.pnpmStore} $store
 
                 ${lib.optionalString copyPnpmStore "chmod -R +w $store"}
 
